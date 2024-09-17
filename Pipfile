@@ -5,8 +5,12 @@ name = "pypi"
 
 [packages]
 pyside6 = "*"
+pyinstaller = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.12"
+
+[scripts]
+exe = "pyinstaller --onefile --windowed set_config.py"

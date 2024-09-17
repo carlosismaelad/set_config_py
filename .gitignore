@@ -62,3 +62,7 @@ coverage.xml
 
 # Pytest #
 .pytest_cache/
+
+# buil for pyinstaller
+build
+dist

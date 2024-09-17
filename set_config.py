@@ -1,7 +1,8 @@
 import sys
+import os
 import xml.etree.ElementTree as ET
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTabWidget, QListWidget
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTabWidget, QListWidget, QMessageBox
 )
 from PySide6.QtCore import Qt
 
@@ -9,8 +10,8 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Gerenciador de Connection Strings - IzzyWay")
-        self.setGeometry(300, 300, 400, 300)
+        self.setWindowTitle("SetConfig - By IzzyWay")
+        self.setGeometry(600, 300, 800, 600)
 
         # Layout Principal
         layout = QVBoxLayout()
@@ -46,6 +47,11 @@ class MainWindow(QWidget):
         add_button.clicked.connect(self.add_application)
         layout.addWidget(add_button)
 
+        # Botão para remover aplicação
+        remove_button = QPushButton("-")
+        remove_button.clicked.connect(self.remove_aplicacao)
+        layout.addWidget(remove_button)
+
         # Lista de Aplicações
         self.applications_list = QListWidget()
         layout.addWidget(self.applications_list)
@@ -58,6 +64,15 @@ class MainWindow(QWidget):
             full_path = f"C:/IzzyWay/{app_name}"
             self.applications_list.addItem(full_path)
             self.application_input.clear()
+
+    def remove_aplicacao(self):
+        selected_items = self.applications_list.selectedItems()
+        if not selected_items:
+            QMessageBox.warning(self, "Aviso", "Selecione um item para remover.")
+            return
+
+        for item in selected_items:
+            self.applications_list.takeItem(self.applications_list.row(item))
 
     def setup_configuration_tab(self):
         layout = QVBoxLayout()
@@ -84,21 +99,28 @@ class MainWindow(QWidget):
         layout.addWidget(QLabel("Senha:"))
         layout.addWidget(self.password_input)
 
+        # Lista de mensagens (para mostrar sucessos ou erros)
+        self.log_list = QListWidget()
+        layout.addWidget(self.log_list)
+
         # Botão Executar
         execute_button = QPushButton("Executar")
-        execute_button.clicked.connect(self.apply_connection_string)
+        execute_button.clicked.connect(self.aplicar_na_connectionstring)
         layout.addWidget(execute_button)
 
         self.configuration_tab.setLayout(layout)
 
-    def apply_connection_string(self):
+    def aplicar_na_connectionstring(self):
+        # Limpar a lista de log antes de cada execução
+        self.log_list.clear()
+
         instance = self.instance_input.text().strip()
         database = self.database_input.text().strip()
         user = self.user_input.text().strip()
         password = self.password_input.text().strip()
 
         if not instance or not database or not user or not password:
-            print("Preencha todos os campos.")
+            self.log_list.addItem("Preencha todos os campos.")
             return
 
         connection_string = f"Server={instance};Database={database};user id={user};password={password};Connection Timeout=600;MultipleActiveResultSets=True;Asynchronous Processing=True;"
@@ -106,16 +128,38 @@ class MainWindow(QWidget):
         # Modificar o connection string em cada aplicação listada
         for i in range(self.applications_list.count()):
             app_path = self.applications_list.item(i).text()
-            config_path = f"{app_path}/exe.config"  # Ajuste o caminho conforme o arquivo config
 
-            # Tentar abrir e modificar o arquivo XML
+            # Verificação se o caminho existe
+            if not os.path.exists(app_path):
+                self.log_list.addItem(f"O caminho {app_path} não existe.")
+                continue
+
+            # Verificar se o caminho é um diretório
+            if not os.path.isdir(app_path):
+                self.log_list.addItem(f"O caminho {app_path} não é um diretório válido.")
+                continue
+
+            # Procurar pelo arquivo .exe na pasta da aplicação
             try:
-                self.modify_connection_string(config_path, connection_string)
-                print(f"Connection string aplicada com sucesso em: {config_path}")
-            except Exception as e:
-                print(f"Erro ao modificar o arquivo {config_path}: {e}")
+                exe_files = [f for f in os.listdir(app_path) if f.endswith(".exe")]
+                if not exe_files:
+                    self.log_list.addItem(f"Nenhum arquivo .exe encontrado no caminho {app_path}")
+                    continue
 
-    def modify_connection_string(self, config_path, new_connection_string):
+                exe_file = exe_files[0]
+                config_path = os.path.join(app_path, f"{exe_file}.config")
+
+                # Tentar abrir e modificar o arquivo XML
+                try:
+                    self.modifica_connectionstring(config_path, connection_string)
+                    self.log_list.addItem(f"Connection string aplicada com sucesso em: {config_path}")
+                except Exception as e:
+                    self.log_list.addItem(f"Erro ao modificar o arquivo {config_path}: {e}")
+
+            except Exception as e:
+                self.log_list.addItem(f"Erro ao acessar o caminho {app_path}: {e}")
+
+    def modifica_connectionstring(self, config_path, new_connection_string):
         # Ler o arquivo XML
         tree = ET.parse(config_path)
         root = tree.getroot()
