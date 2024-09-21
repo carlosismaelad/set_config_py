@@ -13,4 +13,4 @@ pyinstaller = "*"
 python_version = "3.12"
 
 [scripts]
-exe = "pyinstaller --onefile --windowed set_config.py"
+create_exec = "pyinstaller --onefile --windowed set_config.py"
