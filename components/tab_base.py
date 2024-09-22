@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QVBoxLayout, QLabel, QLineEdit, QWidget
+from PySide6.QtWidgets import QLabel, QLineEdit, QVBoxLayout, QWidget
 
 class TabBase(QWidget):
     def __init__(self):
