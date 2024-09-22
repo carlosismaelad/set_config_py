@@ -1,5 +1,5 @@
 from components.tab_base import TabBase
-from PySide6.QtWidgets import QLabel, QLineEdit
+
 
 
 class SincronizadorTab(TabBase):
