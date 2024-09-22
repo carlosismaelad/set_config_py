@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTabWidget
 from tabs.pdv_tab import PDVTab
 from tabs.sincronizador_tab import SincronizadorTab
-# from tabs.integradoripos_tab import IntegradoriposTab
+from tabs.integradoripos_tab import IntegradoriposTab
 # from tabs.webapi_tab import WebApiTab
 
 class MainWindow(QWidget):
@@ -25,8 +25,8 @@ class MainWindow(QWidget):
         self.sincronizador_button = QPushButton("SINCRONIZADOR")
         self.sincronizador_button.clicked.connect(self.show_sincronizador_tab)
         
-        # self.integradoripos_button = QPushButton("INTEGRADORIPOS")
-        # self.integradoripos_button.clicked.connect(self.show_integradoripos_tab)
+        self.integradoripos_button = QPushButton("INTEGRADORIPOS")
+        self.integradoripos_button.clicked.connect(self.show_integradoripos_tab)
         
         # self.webapi_button = QPushButton("WEBAPI")
         # self.webapi_button.clicked.connect(self.show_webapi_tab)
@@ -34,7 +34,7 @@ class MainWindow(QWidget):
         # Adicionar botões ao layout
         button_layout.addWidget(self.pdv_button)
         button_layout.addWidget(self.sincronizador_button)
-        # button_layout.addWidget(self.integradoripos_button)
+        button_layout.addWidget(self.integradoripos_button)
         # button_layout.addWidget(self.webapi_button)        
         main_layout.addLayout(button_layout)
 
@@ -44,7 +44,7 @@ class MainWindow(QWidget):
         # Instanciar as  abas
         self.pdv_tab = PDVTab()
         self.sincronizador_tab = SincronizadorTab()
-        # self.integradoripos_tab = IntegradoriposTab()
+        self.integradoripos_tab = IntegradoriposTab()
         # self.webapi_tab = WebApiTab()
 
         # Adiciona uma aba padrão (inicialmente vazia ou apenas uma)
@@ -69,6 +69,13 @@ class MainWindow(QWidget):
             self.tabs.removeTab(current_index)
             self.tabs.addTab(self.sincronizador_tab, "SINCRONIZADOR")
             self.tabs.setCurrentIndex(self.sincronizador_tab)
+
+    def show_integradoripos_tab(self):
+        current_index = self.tabs.currentIndex()
+        if self.tabs.widget(current_index) != self.integradoripos_tab:
+            self.tabs.removeTab(current_index)
+            self.tabs.addTab(self.integradoripos_tab, "INTEGRADORIPOS")
+            self.tabs.setCurrentIndex(self.integradoripos_tab)
 
 
     # def show_integradoripos_tab(self):
