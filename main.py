@@ -4,13 +4,13 @@ from tabs.pdv_tab import PDVTab
 from tabs.sincronizador_tab import SincronizadorTab
 from tabs.integradoripos_tab import IntegradoriposTab
 from tabs.webapi_tab import WebApiTab
-from utils.xml_hundler import XmlHundler
+from utils.xml_handler import XmlHundler
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("SetConfig - By IzzyWay")
+        self.setWindowTitle("IzzyConfig - By IzzyWay")
         self.setGeometry(600, 300, 800, 600)
 
         self.xml_hundler = XmlHundler()
@@ -23,8 +23,8 @@ class MainWindow(QWidget):
         self.database_input = QLineEdit()
         self.user_input = QLineEdit()
         self.password_input = QLineEdit()
-        self.empresa_input = QLineEdit()  # Apenas para PDV
-        self.cnpj_input = QLineEdit()      # Apenas para PDV
+        self.pdv_tef_empresa_input = QLineEdit()  # Apenas para PDV
+        self.pdv_cnpj_input = QLineEdit()      # Apenas para PDV
 
         # Layout de botões
         button_layout = QHBoxLayout()
@@ -70,17 +70,10 @@ class MainWindow(QWidget):
 
         self.setLayout(main_layout)
 
-    
-
     def show_pdv_tab(self):
         if self.tabs.indexOf(self.pdv_tab) == -1:
             self.tabs.addTab(self.pdv_tab, "PDV")
             self.tabs.setCurrentIndex(self.tabs.indexOf(self.pdv_tab))
-        # current_index = self.tabs.currentIndex()
-        # if self.tabs.widget(current_index) != self.pdv_tab:
-        #     self.tabs.removeTab(current_index)
-        #     self.tabs.addTab(self.pdv_tab, "PDV")
-        #     self.tabs.setCurrentIndex(self.pdv_tab)
     
     def show_sincronizador_tab(self):
         if self.tabs.indexOf(self.sincronizador_tab) == -1:
@@ -91,40 +84,29 @@ class MainWindow(QWidget):
         if self.tabs.indexOf(self.integradoripos_tab) == -1:
             self.tabs.addTab(self.integradoripos_tab, "INTEGRADORIPOS")
             self.tabs.setCurrentIndex(self.tabs.indexOf(self.integradoripos_tab))
-        # current_index = self.tabs.currentIndex()
-        # if self.tabs.widget(current_index) != self.integradoripos_tab:
-        #     self.tabs.removeTab(current_index)
-        #     self.tabs.addTab(self.integradoripos_tab, "INTEGRADORIPOS")
-        #     self.tabs.setCurrentIndex(self.integradoripos_tab)
 
     def show_webapi_tab(self):
         if self.tabs.indexOf(self.webapi_tab) == -1:
             self.tabs.addTab(self.webapi_tab, "WEBAPI")
             self.tabs.setCurrentIndex(self.tabs.indexOf(self.webapi_tab))
-        # current_index = self.tabs.currentIndex()
-        # if self.tabs.widget(current_index) != self.webapi_tab:
-        #     self.tabs.removeTab(current_index)
-        #     self.tabs.addTab(self.webapi_tab, "WEBAPI")
-        #     self.tabs.setCurrentIndex(self.webapi_tab)
 
     def apply_connection_string(self):
         # Coletar dados da interface
         app_name = self.tabs.tabText(self.tabs.currentIndex())  # Nome da aba atual
-        instance = self.tabs.currentWidget().instance_input.text().strip()
-        database = self.tabs.currentWidget().database_input.text().strip()
-        user = self.tabs.currentWidget().user_input.text().strip()
-        password = self.tabs.currentWidget().password_input.text().strip()
+        current_tab = self.tabs.currentWidget()
 
-        print(f"Debug: Instance: '{instance}', Database: '{database}', User: '{user}', Password: '{password}'")
-        
+        instance = current_tab.instance_input.text().strip()
+        database = current_tab.database_input.text().strip()
+        user = current_tab.user_input.text().strip()
+        password = current_tab.password_input.text().strip()        
 
         empresa = None
         cnpj = None
 
         # Apenas para PDV, solicitar Empresa e CNPJ
         if app_name == "PDV":
-            empresa = self.pdv_tab.pdv_tef_input.text().strip()
-            cnpj = self.pdv_tab.pdv_cnpj_input.text().strip()
+            empresa = current_tab.pdv_tef_empresa_input.text().strip()
+            cnpj = current_tab.pdv_cnpj_input.text().strip()
 
         # Aplicar a connection string e modificar appSettings (se for o caso)
         self.xml_hundler.apply_connection_string(app_name, instance, database, user, password, empresa, cnpj)
