@@ -41,3 +41,22 @@ def app_settings_handler(root, additional_settings=None):
             if not any(add_element.attrib.get('key') == key for add_element in app_settings.findall("add")):
                 new_element = ET.Element("add", key=key, value=value)
                 app_settings.append(new_element)
+
+    indent(root)
+
+
+# Função de indentação para formatar o XML
+def indent(elem, level=0):
+    i = "\n" + level * "  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for subelem in elem:
+            indent(subelem, level + 1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i

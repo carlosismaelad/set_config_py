@@ -14,6 +14,7 @@ class PDVHandler:
 
         # Atualizar a connection string se fornecida
         if connection_string:
+            print(f"Connection string antes de atualizar: {connection_string}")
             csu.update_connection_string(root, connection_string)
 
         additional_settings = {}
@@ -21,7 +22,7 @@ class PDVHandler:
             additional_settings["Tef_Empresa"] = empresa
         if cnpj:
             additional_settings["Tef_EmpresaCnpj"] = cnpj
-        
+        print(f"Additional settings: {additional_settings}")
         app_settings_handler(root, additional_settings)
 
         # Escrever as mudanças no arquivo
