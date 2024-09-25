@@ -13,7 +13,7 @@ class MainWindow(QWidget):
         self.setWindowTitle("IzzyConfig - By IzzyWay")
         self.setGeometry(600, 300, 800, 600)
 
-        self.xml_hundler = XmlHundler()
+        self.xml_hundler = None
 
         # Layout principal
         main_layout = QVBoxLayout()
@@ -31,16 +31,16 @@ class MainWindow(QWidget):
 
         # Criação dos botões superiores
         self.pdv_button = QPushButton("PDV")
-        self.pdv_button.clicked.connect(self.show_pdv_tab)
+        self.pdv_button.clicked.connect(self.toggle_show_remove_pdv_tab)
 
         self.sincronizador_button = QPushButton("SINCRONIZADOR")
-        self.sincronizador_button.clicked.connect(self.show_sincronizador_tab)
+        self.sincronizador_button.clicked.connect(self.toggle_show_remove_sincronizador_tab)
         
         self.integradoripos_button = QPushButton("INTEGRADORIPOS")
-        self.integradoripos_button.clicked.connect(self.show_integradoripos_tab)
+        self.integradoripos_button.clicked.connect(self.toggle_show_remove_integradoripos_tab)
         
         self.webapi_button = QPushButton("WEBAPI")
-        self.webapi_button.clicked.connect(self.show_webapi_tab)
+        self.webapi_button.clicked.connect(self.toggle_show_remove_webapi_tab)
 
         # Adicionar botões ao layout
         button_layout.addWidget(self.pdv_button)
@@ -70,25 +70,35 @@ class MainWindow(QWidget):
 
         self.setLayout(main_layout)
 
-    def show_pdv_tab(self):
-        if self.tabs.indexOf(self.pdv_tab) == -1:
+
+    def toggle_show_remove_pdv_tab(self):
+        index = self.tabs.indexOf(self.pdv_tab)
+        if index == -1:
             self.tabs.addTab(self.pdv_tab, "PDV")
-            self.tabs.setCurrentIndex(self.tabs.indexOf(self.pdv_tab))
+        else:
+            self.tabs.removeTab(index)
     
-    def show_sincronizador_tab(self):
-        if self.tabs.indexOf(self.sincronizador_tab) == -1:
+    def toggle_show_remove_sincronizador_tab(self):
+        index = self.tabs.indexOf(self.sincronizador_tab)
+        if index == -1:
             self.tabs.addTab(self.sincronizador_tab, "SINCRONIZADOR")
-            self.tabs.setCurrentIndex(self.tabs.indexOf(self.sincronizador_tab))
+        else:
+            self.tabs.removeTab(index)       
 
-    def show_integradoripos_tab(self):
-        if self.tabs.indexOf(self.integradoripos_tab) == -1:
+    def toggle_show_remove_integradoripos_tab(self):
+        index = self.tabs.indexOf(self.integradoripos_tab)
+        if index == -1:
             self.tabs.addTab(self.integradoripos_tab, "INTEGRADORIPOS")
-            self.tabs.setCurrentIndex(self.tabs.indexOf(self.integradoripos_tab))
+        else:
+            self.tabs.removeTab(index)       
 
-    def show_webapi_tab(self):
-        if self.tabs.indexOf(self.webapi_tab) == -1:
+    def toggle_show_remove_webapi_tab(self):
+        index = self.tabs.indexOf(self.webapi_tab)
+        if index == -1:
             self.tabs.addTab(self.webapi_tab, "WEBAPI")
-            self.tabs.setCurrentIndex(self.tabs.indexOf(self.webapi_tab))
+        else:
+            self.tabs.removeTab(index)
+
 
     def apply_connection_string(self):
         # Coletar dados da interface
@@ -108,8 +118,11 @@ class MainWindow(QWidget):
             empresa = current_tab.pdv_tef_empresa_input.text().strip()
             cnpj = current_tab.pdv_cnpj_input.text().strip()
 
+        # Criar uma nova instância de XmlHundler passando o app_name
+        self.xml_hundler = XmlHundler(app_name)
+
         # Aplicar a connection string e modificar appSettings (se for o caso)
-        self.xml_hundler.apply_connection_string(app_name, instance, database, user, password, empresa, cnpj)
+        self.xml_hundler.apply_connection_string(instance, database, user, password, empresa, cnpj)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
