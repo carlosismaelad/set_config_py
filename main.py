@@ -1,10 +1,11 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTabWidget, QLineEdit
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTabWidget, QLineEdit, QTextEdit
 from tabs.pdv_tab import PDVTab
 from tabs.sincronizador_tab import SincronizadorTab
 from tabs.integradoripos_tab import IntegradoriposTab
 from tabs.webapi_tab import WebApiTab
 from utils.xml_handler import XmlHundler
+from exceptions.custom_exceptions import CustomExecption
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -59,7 +60,19 @@ class MainWindow(QWidget):
         self.webapi_tab = WebApiTab()
 
         # Adiciona uma aba padrão (inicialmente vazia ou apenas uma)
-        self.tabs.addTab(self.pdv_tab, "PDV")
+        # self.tabs.addTab(self.pdv_tab, "PDV")
+
+        # Criar aba de logs
+        self.log_tab = QWidget()
+        self.log_layout = QVBoxLayout()
+        self.log_widget = QTextEdit()  # Widget para mostrar logs
+        self.log_widget.setReadOnly(True)  # Apenas leitura
+        self.log_layout.addWidget(self.log_widget)
+        self.log_tab.setLayout(self.log_layout)
+
+        # Adicionar a aba de logs ao QTabWidget
+        self.tabs.addTab(self.log_tab, "Logs")
+
         main_layout.addWidget(self.tabs)
 
         # Botão Executar
@@ -122,7 +135,10 @@ class MainWindow(QWidget):
         self.xml_hundler = XmlHundler(app_name)
 
         # Aplicar a connection string e modificar appSettings (se for o caso)
-        self.xml_hundler.apply_connection_string(instance, database, user, password, empresa, cnpj)
+        try:
+            self.xml_hundler.apply_connection_string(instance, database, user, password, empresa, cnpj)
+        except CustomExecption as e:
+            print(e)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
