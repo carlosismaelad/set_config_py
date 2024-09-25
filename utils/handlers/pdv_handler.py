@@ -5,7 +5,7 @@ from utils.handlers.connection_string_updater import ConnectionStringUpdater as 
 class PDVHandler:
 
     @staticmethod
-    def modify_pdv_config(config_path, connection_string, empresa, cnpj):
+    def modify_pdv_config(config_path, connection_string, empresa, cnpj, log_widget=None):
         
         
         # Ler o arquivo XML
@@ -14,7 +14,7 @@ class PDVHandler:
 
         # Atualizar a connection string se fornecida
         if connection_string:
-            print(f"Connection string antes de atualizar: {connection_string}")
+
             csu.update_connection_string(root, connection_string)
 
         additional_settings = {}
@@ -22,8 +22,8 @@ class PDVHandler:
             additional_settings["Tef_Empresa"] = empresa
         if cnpj:
             additional_settings["Tef_EmpresaCnpj"] = cnpj
-        print(f"Additional settings: {additional_settings}")
-        app_settings_handler(root, additional_settings)
+
+        app_settings_handler(root, additional_settings, log_widget=log_widget)
 
         # Escrever as mudanças no arquivo
         tree.write(config_path, encoding="utf-8", xml_declaration=True)
