@@ -4,6 +4,10 @@ from utils.handlers.pdv_handler import PDVHandler
 from utils.handlers.sincronizador_handler import SincronizadorHandler
 from utils.handlers.integradoripos_handler import IntegradoriposHandler
 from utils.handlers.webapi_handler import WebApiHandler
+from utils.show_messages import show_message
+from exceptions.custom_exceptions import CustomExecption
+from PySide6.QtWidgets import QTextEdit
+
 
 class XmlHundler:
 
@@ -53,7 +57,14 @@ class XmlHundler:
         return os.path.join(program_folder, app_config_files.get(self.app_name, ""))
 
 
-    def apply_connection_string(self, instance, database, user, password, tef_empresa=00000000, cnpj=11111111111111):
+    def apply_connection_string(self, log_widget, instance, database, user, password, tef_empresa=00000000, cnpj=11111111111111):
+
+        print("log_widget type XML HANDLER:", type(log_widget))
+        if log_widget is not None and not isinstance(log_widget, QTextEdit):
+            print(f"log_widget: {log_widget}, type: {type(log_widget)}")
+            raise TypeError("log_widget deve ser uma instância de QTextEdit XML HANDLER.")
+
+    
         izzyway_folder = self.find_izzyway_folder()
         program_folder = self.find_program_folder(izzyway_folder)
         config_file = self.get_config_file(program_folder)
@@ -66,13 +77,15 @@ class XmlHundler:
 
         try:
             if self.app_name == "PDV":
-                PDVHandler.modify_pdv_config(config_path, connection_string, tef_empresa, cnpj)
+                PDVHandler.modify_pdv_config(log_widget, config_path, connection_string, tef_empresa, cnpj)
             elif self.app_name == "SINCRONIZADOR":
-                SincronizadorHandler.modify_sincronizador_config(config_path, connection_string)
+                SincronizadorHandler.modify_sincronizador_config(log_widget, config_path, connection_string)
             elif self.app_name == "INTEGRADORIPOS":
-                IntegradoriposHandler.modify_integradoripos_config(config_path, connection_string)
+                IntegradoriposHandler.modify_integradoripos_config(log_widget, config_path, connection_string)
             elif self.app_name == "WEBAPI":
-                WebApiHandler.modify_webapi_config(config_path, connection_string)
+                WebApiHandler.modify_webapi_config(log_widget, config_path, connection_string)
         except Exception as e:
-            print(f"Erro ao tentar modificar o arquivo {config_path}: {e}")
+            error_message = f"Erro ao repassar os parâmetros para os métodos de alteração."
+            show_message(log_widget, error_message)
+            raise CustomExecption(f"{error_message}: {e}")
 

@@ -1,7 +1,12 @@
 import xml.etree.ElementTree as ET
 from exceptions.custom_exceptions import CustomExecption
+from utils.show_messages import show_message
+from PySide6.QtWidgets import QTextEdit
 
-def app_settings_handler(root, additional_settings=None, log_widget=None):
+def app_settings_handler(log_widget, config_path, root, additional_settings=None):
+    if log_widget is not None and not isinstance(log_widget, QTextEdit):
+            print(f"log_widget: {log_widget}, type: {type(log_widget)}")
+            raise TypeError("log_widget deve ser uma instância de QTextEdit APP SETTINGS HANDLER.")
     """
     Atualiza ou cria campos em appSettings.
 
@@ -46,13 +51,15 @@ def app_settings_handler(root, additional_settings=None, log_widget=None):
                 if not any(add_element.attrib.get('key') == key for add_element in app_settings.findall("add")):
                     new_element = ET.Element("add", key=key, value=value)
                     app_settings.append(new_element)
+
+            show_message(log_widget, f"appSettings modificado com sucesso em {config_path}!")
+
     except Exception as e:
-        custom_exception = CustomExecption(f"Houve um erro ao tentar editar appSettings")
-        if log_widget:
-            custom_exception.append_exception_on_log_tab(log_widget)
-        raise custom_exception
-
-
+        error_message = f"Erro ao atualizar appSettings em {config_path}"
+        show_message(log_widget, error_message)
+        raise CustomExecption(f"{error_message}: {e}")
+    
+    # Chama a função de identação
     indent(root)
 
 

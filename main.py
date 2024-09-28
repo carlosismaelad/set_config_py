@@ -6,6 +6,8 @@ from tabs.integradoripos_tab import IntegradoriposTab
 from tabs.webapi_tab import WebApiTab
 from utils.xml_handler import XmlHundler
 from exceptions.custom_exceptions import CustomExecption
+from utils.show_messages import show_message
+from exceptions.custom_exceptions import CustomExecption
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -114,6 +116,8 @@ class MainWindow(QWidget):
 
 
     def apply_connection_string(self):
+
+        print("log_widget type:", type(self.log_widget))
         # Coletar dados da interface
         app_name = self.tabs.tabText(self.tabs.currentIndex())  # Nome da aba atual
         current_tab = self.tabs.currentWidget()
@@ -136,9 +140,15 @@ class MainWindow(QWidget):
 
         # Aplicar a connection string e modificar appSettings (se for o caso)
         try:
-            self.xml_hundler.apply_connection_string(instance, database, user, password, empresa, cnpj)
+            if self.log_widget is not None and not isinstance(self.log_widget, QTextEdit):
+                print(f"log_widget: {self.log_widget}, type: {type(self.log_widget)}")
+                raise TypeError("log_widget deve ser uma instância de QTextEdit MAIN.PY.")
+            self.xml_hundler.apply_connection_string(self.log_widget, instance, database, user, password, empresa, cnpj)
+            show_message(self.log_widget, "Parâmetros de entrada repassados.")
         except CustomExecption as e:
-            print(e)
+            error_message = f"Erro no módulo de entrada da aplicação!"
+            show_message(self.log_widget, error_message)
+            raise CustomExecption(f"{error_message}: {e}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
