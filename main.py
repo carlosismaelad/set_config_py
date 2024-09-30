@@ -1,5 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTabWidget, QLineEdit, QTextEdit
+from PySide6.QtGui import QIcon
 from tabs.pdv_tab import PDVTab
 from tabs.sincronizador_tab import SincronizadorTab
 from tabs.integradoripos_tab import IntegradoriposTab
@@ -14,6 +15,7 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle("IzzyConfig - By IzzyWay")
+        self.setWindowIcon(QIcon("izzywaylogo.ico"))
         self.setGeometry(600, 300, 800, 600)
 
         self.xml_hundler = None
