@@ -14,4 +14,4 @@ shiboken6 = "==6.7.2"
 python_version = "3.12"
 
 [scripts]
-create_exec = "pyinstaller --onefile --windowed set_config.py"
+create_exec = "pyinstaller --icon=izzywaylogo.ico --onefile --windowed --name=IzzyConfig main.py"
