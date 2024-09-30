@@ -58,13 +58,7 @@ class XmlHundler:
 
 
     def apply_connection_string(self, log_widget, instance, database, user, password, tef_empresa=00000000, cnpj=11111111111111):
-
-        print("log_widget type XML HANDLER:", type(log_widget))
-        if log_widget is not None and not isinstance(log_widget, QTextEdit):
-            print(f"log_widget: {log_widget}, type: {type(log_widget)}")
-            raise TypeError("log_widget deve ser uma instância de QTextEdit XML HANDLER.")
-
-    
+            
         izzyway_folder = self.find_izzyway_folder()
         program_folder = self.find_program_folder(izzyway_folder)
         config_file = self.get_config_file(program_folder)
@@ -85,7 +79,7 @@ class XmlHundler:
             elif self.app_name == "WEBAPI":
                 WebApiHandler.modify_webapi_config(log_widget, config_path, connection_string)
         except Exception as e:
-            error_message = f"Erro ao repassar os parâmetros para os métodos de alteração."
+            error_message = f"Erro ao repassar os parâmetros para os métodos de alteração de {self.app_name}."
             show_message(log_widget, error_message)
             raise CustomExecption(f"{error_message}: {e}")
 

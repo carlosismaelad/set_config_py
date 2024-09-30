@@ -1,12 +1,9 @@
 import xml.etree.ElementTree as ET
 from exceptions.custom_exceptions import CustomExecption
 from utils.show_messages import show_message
-from PySide6.QtWidgets import QTextEdit
 
-def app_settings_handler(log_widget, config_path, root, additional_settings=None):
-    if log_widget is not None and not isinstance(log_widget, QTextEdit):
-            print(f"log_widget: {log_widget}, type: {type(log_widget)}")
-            raise TypeError("log_widget deve ser uma instância de QTextEdit APP SETTINGS HANDLER.")
+
+def app_settings_handler(root, log_widget, config_path, additional_settings=None):
     """
     Atualiza ou cria campos em appSettings.
 

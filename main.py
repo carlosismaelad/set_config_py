@@ -116,8 +116,7 @@ class MainWindow(QWidget):
 
 
     def apply_connection_string(self):
-
-        print("log_widget type:", type(self.log_widget))
+        
         # Coletar dados da interface
         app_name = self.tabs.tabText(self.tabs.currentIndex())  # Nome da aba atual
         current_tab = self.tabs.currentWidget()
@@ -125,7 +124,7 @@ class MainWindow(QWidget):
         instance = current_tab.instance_input.text().strip()
         database = current_tab.database_input.text().strip()
         user = current_tab.user_input.text().strip()
-        password = current_tab.password_input.text().strip()        
+        password = current_tab.password_input.text().strip()
 
         empresa = None
         cnpj = None
@@ -145,6 +144,7 @@ class MainWindow(QWidget):
                 raise TypeError("log_widget deve ser uma instância de QTextEdit MAIN.PY.")
             self.xml_hundler.apply_connection_string(self.log_widget, instance, database, user, password, empresa, cnpj)
             show_message(self.log_widget, "Parâmetros de entrada repassados.")
+
         except CustomExecption as e:
             error_message = f"Erro no módulo de entrada da aplicação!"
             show_message(self.log_widget, error_message)
